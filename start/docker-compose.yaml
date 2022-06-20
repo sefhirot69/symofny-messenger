@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  database:
+    platform: linux/x86_64
+    container_name: 'db-messenger'
+    image: mysql:5.7
+    command: --sql_mode=""
+    ports:
+      - "3306"
+    environment:
+      MYSQL_DATABASE: messenger
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: root
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:
