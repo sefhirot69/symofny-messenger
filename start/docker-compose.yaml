@@ -8,10 +8,10 @@ services:
     ports:
       - "3306"
     environment:
-      MYSQL_DATABASE: messenger
+      MYSQL_DATABASE: messenger_tutorial
       MYSQL_ROOT_USER: root
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: mysql
+      MYSQL_USER: root
       MYSQL_PASSWORD: root
     volumes:
       - db-data:/var/lib/mysql
