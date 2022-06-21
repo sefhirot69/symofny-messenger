@@ -4,37 +4,38 @@ declare(strict_types=1);
 
 namespace App\MessageHandler;
 
+use App\Entity\ImagePost;
 use App\Message\AddPonkaToImage;
 use App\Message\DeleteImagePost;
 use App\Photo\PhotoFileManager;
 use App\Photo\PhotoPonkaficator;
+use App\Repository\ImagePostRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use RuntimeException;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-final class AddPonkaToImageHandler implements MessageHandlerInterface
+final class AddPonkaToImageHandler implements MessageHandlerInterface, LoggerAwareInterface
 {
 
-    /**
-     * @var PhotoPonkaficator
-     */
+    use LoggerAwareTrait;
+
     private $ponkaficator;
-    /**
-     * @var PhotoFileManager
-     */
     private $photoManager;
-    /**
-     * @var EntityManagerInterface
-     */
     private $entityManager;
+    private $imagePostRepository;
 
     public function __construct(
         PhotoPonkaficator $ponkaficator,
         PhotoFileManager $photoManager,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        ImagePostRepository $imagePostRepository
     ) {
         $this->ponkaficator = $ponkaficator;
         $this->photoManager = $photoManager;
         $this->entityManager = $entityManager;
+        $this->imagePostRepository = $imagePostRepository;
     }
 
     public function __invoke(AddPonkaToImage $addPonkaToImage)
@@ -42,7 +43,15 @@ final class AddPonkaToImageHandler implements MessageHandlerInterface
         /*
          * Start Ponkafication!
          */
-        $imagePost = $addPonkaToImage->getImagePost();
+        $imagePostId = $addPonkaToImage->getImagePostId();
+        $imagePost = $this->imagePostRepository->find($imagePostId);
+
+        if (null === $imagePost) {
+            $errorMessage = sprintf('ImagePost By id %s not found', $imagePostId);
+            $this->logger->error($errorMessage);
+            throw new RuntimeException($errorMessage);
+        }
+
         $filename = $imagePost->getFilename();
 
         $updatedContents = $this->ponkaficator->ponkafy(
@@ -50,6 +59,7 @@ final class AddPonkaToImageHandler implements MessageHandlerInterface
         );
         $this->photoManager->update($filename, $updatedContents);
         $imagePost->markAsPonkaAdded();
+        $this->entityManager->persist($imagePost);
         $this->entityManager->flush();
         /*
          * You've been Ponkafied!

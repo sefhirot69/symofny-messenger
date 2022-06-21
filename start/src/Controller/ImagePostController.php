@@ -65,7 +65,7 @@ class ImagePostController extends AbstractController
         $entityManager->flush();
 
 
-        $message = new AddPonkaToImage($imagePost);
+        $message = new AddPonkaToImage($imagePost->getId());
         $bus->dispatch($message);
 
         return $this->toJson($imagePost, 201);
