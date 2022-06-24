@@ -38,6 +38,9 @@ final class AddPonkaToImageHandler implements MessageHandlerInterface, LoggerAwa
         $this->imagePostRepository = $imagePostRepository;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function __invoke(AddPonkaToImage $addPonkaToImage)
     {
         /*
@@ -50,6 +53,10 @@ final class AddPonkaToImageHandler implements MessageHandlerInterface, LoggerAwa
             $errorMessage = sprintf('ImagePost By id %s not found', $imagePostId);
             $this->logger->error($errorMessage);
             throw new RuntimeException($errorMessage);
+        }
+
+        if (random_int(0, 10) < 7) {
+            throw new \RuntimeException('I Failed randomly!!!');
         }
 
         $filename = $imagePost->getFilename();
