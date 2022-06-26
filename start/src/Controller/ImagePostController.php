@@ -46,6 +46,7 @@ class ImagePostController extends AbstractController
         EntityManagerInterface $entityManager,
         MessageBusInterface $bus
     ) {
+
         /** @var UploadedFile $imageFile */
         $imageFile = $request->files->get('file');
 
