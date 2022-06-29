@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Message;
+namespace App\Message\Event;
 
-final class DeletePhotoFile
+final class ImagePostDeletedEvent
 {
 
     private $filename;
