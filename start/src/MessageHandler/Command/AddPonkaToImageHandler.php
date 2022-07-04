@@ -53,7 +53,7 @@ final class AddPonkaToImageHandler implements MessageHandlerInterface, LoggerAwa
             throw new RuntimeException($errorMessage);
         }
 
-        if (random_int(0, 10) < 7) {
+        if (random_int(0, 10) < 5) {
             throw new \RuntimeException('I Failed randomly!!!');
         }
 
